@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Orders{% endblock %}
+
+{% block body %}
+    <h1>Orders</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>IdOrder</th>
+                <td>{{ order.idOrder }}</td>
+            </tr>
+            <tr>
+                <th>Reference</th>
+                <td>{{ order.reference }}</td>
+            </tr>
+            <tr>
+                <th>TotalPaid</th>
+                <td>{{ order.totalPaid }}</td>
+            </tr>
+            <tr>
+                <th>DateAdd</th>
+                <td>{{ order.dateAdd ? order.dateAdd|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('orders_index') }}">back to list</a>
+
+    <a href="{{ path('orders_edit', {'idOrder': order.idOrder}) }}">edit</a>
+
+    {{ include('orders/_delete_form.html.twig') }}
+{% endblock %}

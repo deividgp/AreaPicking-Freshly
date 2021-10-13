@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Orders index{% endblock %}
+
+{% block body %}
+    <h1>Orders index</h1>
+{#    {{ form_start(form) }}#}
+{#    {{ form_widget(form) }}#}
+{#        <input type="submit" value="New" />#}
+{#    {{ form_end(form) }}#}
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <input type="submit" value="Find" />
+    {{ form_end(form) }}
+    <a href="{{ path('orders_index') }}">Reset filter</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>IdOrder</th>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Country</th>
+                <th>Products</th>
+                <th>Country</th>
+                <th>State</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.idOrder }}</td>
+                <td>{{ order.dateAdd ? order.dateAdd|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ order.idAddressDelivery.firstname }} {{ order.idAddressDelivery.lastname }}</td>
+                <td>{{ order.idAddressDelivery.address1 }} {{ order.idAddressDelivery.address2 }}</td>
+                <td>{{ order.idAddressDelivery.idCountry.name }}</td>
+                <td>
+                {% for orderDetail in orderDetails %}
+                    {% if orderDetail.idOrder == order %}
+                        {{ orderDetail.productName }}
+                    {% endif %}
+                {% endfor %}
+                </td>
+                <td>{{ order.idAddressDelivery.idCountry.name }}</td>
+                <td>
+                    {{ order.currentState.name }}
+                </td>
+                <td>
+                    <a href="{{ path('orders_show', {'idOrder': order.idOrder}) }}">show</a>
+                    <a href="{{ path('orders_edit', {'idOrder': order.idOrder}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
