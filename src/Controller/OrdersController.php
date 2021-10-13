@@ -24,7 +24,7 @@ class OrdersController extends AbstractController
         $form = $this->createForm(FilterType::class);
         $form->handleRequest($request);
         $orders = null;
-        $orderStateLang = $this->getDoctrine()
+        $orderStateLangs = $this->getDoctrine()
             ->getRepository(orderStateLang::class)
             ->findAll();
         $orderDetails = $this->getDoctrine()
@@ -64,7 +64,7 @@ class OrdersController extends AbstractController
             'form' => $form->createView(),
             'orders' => $orders,
             'orderDetails' => $orderDetails,
-            'orderStateLang' => $orderStateLang,
+            'orderStateLangs' => $orderStateLangs,
         ]);
     }
 
@@ -118,13 +118,13 @@ class OrdersController extends AbstractController
     #[Route('/{idOrder}', name: 'orders_update', methods: ['POST'])]
     public function updateState(Request $request, Orders $order): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$order->getIdOrder(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($order);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('orders_index', [], Response::HTTP_SEE_OTHER);
+        $state = $request->request->get('state');
+        $orderStateLang = $this->getDoctrine()
+            ->getRepository(orderStateLang::class)
+            ->findOneBy(['idOrderState' => $state]);
+        $order->setCurrentState($orderStateLang);
+        $this->getDoctrine()->getManager()->flush();
+        return $this->redirectToRoute('orders_index');
     }
 
     #[Route('/getValues', name: 'orders_filter', methods: ['GET'])]

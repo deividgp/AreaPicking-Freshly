@@ -44,5 +44,8 @@ class OrderStateLang
         return $this->name;
     }
 
-
+    public function __toString(): string
+    {
+        return $this->name.PHP_EOL;
+    }
 }

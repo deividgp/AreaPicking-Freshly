@@ -4,10 +4,12 @@
 
 {% block body %}
     <h1>Orders index</h1>
-{#    {{ form_start(form) }}#}
-{#    {{ form_widget(form) }}#}
-{#        <input type="submit" value="New" />#}
-{#    {{ form_end(form) }}#}
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+        <input type="submit" value="New" />
+    {{ form_end(form) }}
+
+    <a href="{{ path('orders_new') }}">New order</a>
     {{ form_start(form) }}
         {{ form_widget(form) }}
         <input type="submit" value="Find" />
@@ -44,7 +46,20 @@
                 </td>
                 <td>{{ order.idAddressDelivery.idCountry.name }}</td>
                 <td>
-                    {{ order.currentState.name }}
+                    <form method="post" action="{{ path('orders_update', {'idOrder': order.idOrder}) }}">
+                        <select name="state" id="state">
+                            {% for orderStateLang in orderStateLangs %}
+                                {% if orderStateLang == order.currentState %}
+                                    <option selected="selected" value={{ orderStateLang.idOrderState }}>
+                                {% else %}
+                                    <option value={{ orderStateLang.idOrderState }}>
+                                {% endif %}
+                                {{ orderStateLang.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn">Update state</button>
+                    </form>
+{#                    {{ order.currentState.name }}#}
                 </td>
                 <td>
                     <a href="{{ path('orders_show', {'idOrder': order.idOrder}) }}">show</a>

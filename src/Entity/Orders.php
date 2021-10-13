@@ -44,7 +44,7 @@ class Orders
     private $dateAdd;
 
     /**
-     * @var Customer
+     * @var \Customer
      *
      * @ORM\ManyToOne(targetEntity="Customer")
      * @ORM\JoinColumns({
@@ -54,7 +54,7 @@ class Orders
     private $idCustomer;
 
     /**
-     * @var Address
+     * @var \Address
      *
      * @ORM\ManyToOne(targetEntity="Address")
      * @ORM\JoinColumns({
@@ -64,7 +64,7 @@ class Orders
     private $idAddressDelivery;
 
     /**
-     * @var OrderStateLang
+     * @var \OrderStateLang
      *
      * @ORM\ManyToOne(targetEntity="OrderStateLang")
      * @ORM\JoinColumns({
@@ -106,27 +106,83 @@ class Orders
     }
 
     /**
-     * @return Customer
+     * @return mixed
      */
-    public function getIdCustomer(): Customer
+    public function getIdCustomer(): mixed
     {
         return $this->idCustomer;
     }
 
     /**
-     * @return Address
+     * @return mixed
      */
-    public function getIdAddressDelivery(): Address
+    public function getIdAddressDelivery(): mixed
     {
         return $this->idAddressDelivery;
     }
 
     /**
-     * @return OrderStateLang
+     * @return mixed
      */
-    public function getCurrentState(): OrderStateLang
+    public function getCurrentState(): mixed
     {
         return $this->currentState;
+    }
+
+    /**
+     * @param OrderStateLang $currentState
+     */
+    public function setCurrentState(OrderStateLang $currentState): void
+    {
+        $this->currentState = $currentState;
+    }
+
+    /**
+     * @param int $idOrder
+     */
+    public function setIdOrder(int $idOrder): void
+    {
+        $this->idOrder = $idOrder;
+    }
+
+    /**
+     * @param string|null $reference
+     */
+    public function setReference(?string $reference): void
+    {
+        $this->reference = $reference;
+    }
+
+    /**
+     * @param string $totalPaid
+     */
+    public function setTotalPaid(string $totalPaid): void
+    {
+        $this->totalPaid = $totalPaid;
+    }
+
+    /**
+     * @param DateTime $dateAdd
+     */
+    public function setDateAdd(DateTime $dateAdd): void
+    {
+        $this->dateAdd = $dateAdd;
+    }
+
+    /**
+     * @param Customer $idCustomer
+     */
+    public function setIdCustomer(Customer $idCustomer): void
+    {
+        $this->idCustomer = $idCustomer;
+    }
+
+    /**
+     * @param Address $idAddressDelivery
+     */
+    public function setIdAddressDelivery(Address $idAddressDelivery): void
+    {
+        $this->idAddressDelivery = $idAddressDelivery;
     }
 
 

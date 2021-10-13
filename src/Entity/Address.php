@@ -57,7 +57,7 @@ class Address
     private $city;
 
     /**
-     * @var Customer
+     * @var \Customer
      *
      * @ORM\ManyToOne(targetEntity="Customer")
      * @ORM\JoinColumns({
@@ -67,7 +67,7 @@ class Address
     private $idCustomer;
 
     /**
-     * @var CountryLang
+     * @var \CountryLang
      *
      * @ORM\ManyToOne(targetEntity="CountryLang")
      * @ORM\JoinColumns({
@@ -125,20 +125,23 @@ class Address
     }
 
     /**
-     * @return Customer
+     * @return mixed
      */
-    public function getIdCustomer(): Customer
+    public function getIdCustomer(): mixed
     {
         return $this->idCustomer;
     }
 
     /**
-     * @return CountryLang
+     * @return mixed
      */
-    public function getIdCountry(): CountryLang
+    public function getIdCountry(): mixed
     {
         return $this->idCountry;
     }
 
-
+    public function __toString(): string
+    {
+        return $this->address1." ".$this->address2." ".$this->city." ".$this->idCountry->getName().PHP_EOL;
+    }
 }

@@ -59,5 +59,9 @@ class Customer
         return $this->lastname;
     }
 
+    public function __toString(): string
+    {
+        return $this->firstname." ".$this->lastname.PHP_EOL;
+    }
 
 }

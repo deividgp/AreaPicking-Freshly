@@ -70,9 +70,9 @@ class OrderDetail
     }
 
     /**
-     * @return Orders
+     * @return mixed
      */
-    public function getIdOrder(): Orders
+    public function getIdOrder(): mixed
     {
         return $this->idOrder;
     }
