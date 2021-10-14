@@ -1,0 +1,1 @@
+Simple Symfony 5 project made with some jQuery.

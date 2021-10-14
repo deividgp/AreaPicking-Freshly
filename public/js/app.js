@@ -16,6 +16,7 @@ $(document).ready(function () {
             }
         });
     });
+    const modal = bootstrap.Modal.getInstance(document.getElementById('#orderModal'));
     $("#orderModal").on('show.bs.modal', function (event) {
         const elements = $(event.relatedTarget).find("td");
         let html = "";

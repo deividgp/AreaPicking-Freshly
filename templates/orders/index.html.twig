@@ -14,18 +14,20 @@
             </div>
         </div>
     </div>
-
+    <h4>New order</h4>
     <form method="POST" id="createOrder">
         {{ form_start(form) }}
         {{ form_rest(form)}}
         <input type="submit" value="New order"/>
         {{ form_end(form) }}
     </form>
+    <h4>Filter</h4>
     {{ form_start(formFilter) }}
         {{ form_widget(formFilter) }}
         <input type="submit" value="Find" />
     {{ form_end(formFilter) }}
     <a href="{{ path('orders_index') }}">Reset filter</a>
+    <h4>Table</h4>
     <div id="table-output">
         <table class="table">
             <thead>
@@ -37,7 +39,7 @@
                 <th>Country</th>
                 <th>Products</th>
                 <th>State</th>
-                <th>actions</th>
+                <th>Update state</th>
             </tr>
             </thead>
             <tbody>
@@ -60,15 +62,10 @@
                         <form method="post" action="{{ path('orders_update', {'idOrder': order.idOrder}) }}">
                             <label for="state"></label><select name="state" id="state">
                                 {% for orderStateLang in orderStateLangs %}
-{#                                    {% if orderStateLang == order.currentState %}#}
-{#                                    <option selected="selected" value={{ orderStateLang.idOrderState }}>#}
-{#                                    {% else %}#}
-{#                                        <option value={{ orderStateLang.idOrderState }}>#}
-{#                                    {% endif %}#}
                                     <option value={{ orderStateLang.idOrderState }}>{{ orderStateLang.name }}</option>
                                 {% endfor %}
                             </select>
-                            <button class="btn">Update state</button>
+                            <input type="submit" value="Update state" />
                         </form>
                     </td>
                 </tr>
@@ -84,8 +81,5 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
 {% endblock %}

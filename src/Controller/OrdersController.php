@@ -59,7 +59,7 @@ class OrdersController extends AbstractController
         }else{
             $orders = $this->getDoctrine()
                 ->getRepository(Orders::class)
-                ->findAll();
+                ->findBy(['currentState' => "2"]);
         }
         return $this->render('orders/index.html.twig', [
             'form' => $form->createView(),
@@ -117,32 +117,5 @@ class OrdersController extends AbstractController
         $order->setCurrentState($orderStateLang);
         $this->getDoctrine()->getManager()->flush();
         return $this->redirectToRoute('orders_index');
-    }
-
-    #[Route('/getValues', name: 'orders_filter', methods: ['GET'])]
-    public function listFilterValues(Request $request): JsonResponse
-    {
-        $responseArray = array();
-        switch($request->query->get("filter")){
-            case "Country":
-                $values = $this->getDoctrine()->getRepository(CountryLang::class)->findAll();
-                foreach($values as $value){
-                    $responseArray[] = array(
-                        "id" => $value->getIdCountry(),
-                        "name" => $value->getName()
-                    );
-                }
-                break;
-            case "State":
-                $values = $this->getDoctrine()->getRepository(OrderStateLang::class)->findAll();
-                foreach($values as $value){
-                    $responseArray[] = array(
-                        "id" => $value->getIdOrderState(),
-                        "name" => $value->getName()
-                    );
-                }
-                break;
-        }
-        return new JsonResponse($responseArray);
     }
 }
