@@ -21,8 +21,9 @@ class OrdersController extends AbstractController
     #[Route('/', name: 'orders_index', methods: ['GET','POST'])]
     public function index(Request $request): Response
     {
-        $form = $this->createForm(FilterType::class);
-        $form->handleRequest($request);
+        $form = $this->createForm(OrdersType::class);
+        $formFilter = $this->createForm(FilterType::class);
+        $formFilter->handleRequest($request);
         $orders = null;
         $orderStateLangs = $this->getDoctrine()
             ->getRepository(orderStateLang::class)
@@ -31,9 +32,9 @@ class OrdersController extends AbstractController
             ->getRepository(OrderDetail::class)
             ->findAll();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $filter = $form->get('filter')->getData();
-            $value = $form->get('value')->getData();
+        if ($formFilter->isSubmitted() && $formFilter->isValid()) {
+            $filter = $formFilter->get('filter')->getData();
+            $value = $formFilter->get('value')->getData();
             switch($filter){
                 case "Country":
                     $country = $this->getDoctrine()
@@ -62,31 +63,40 @@ class OrdersController extends AbstractController
         }
         return $this->render('orders/index.html.twig', [
             'form' => $form->createView(),
+            'formFilter' => $formFilter->createView(),
             'orders' => $orders,
             'orderDetails' => $orderDetails,
             'orderStateLangs' => $orderStateLangs,
         ]);
     }
 
-    #[Route('/new', name: 'orders_new', methods: ['GET','POST'])]
-    public function new(Request $request): Response
+    /**
+     * @Route("/new", name="orders_new", options={"expose"=true})
+     */
+    public function new(Request $request): JsonResponse
     {
+        if (!$request->isXmlHttpRequest()) {
+            return new JsonResponse(array('message' => 'Use only ajax!'), 400);
+        }
+
         $order = new Orders();
         $form = $this->createForm(OrdersType::class, $order);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($order);
             $entityManager->flush();
 
-            return $this->redirectToRoute('orders_index', [], Response::HTTP_SEE_OTHER);
+            return new JsonResponse(array('message' => 'Success!'), 200);
         }
-
-        return $this->renderForm('orders/new.html.twig', [
-            'order' => $order,
-            'form' => $form,
-        ]);
+        return new JsonResponse(
+            array(
+                'message' => 'Error',
+                'form' => $this->renderView('users/form.html.twig',
+                    array(
+                        'form' => $form->createView(),
+                    ))), 400);
     }
 
     #[Route('/{idOrder}', name: 'orders_show', methods: ['GET'])]
@@ -94,24 +104,6 @@ class OrdersController extends AbstractController
     {
         return $this->render('orders/show.html.twig', [
             'order' => $order,
-        ]);
-    }
-
-    #[Route('/{idOrder}/edit', name: 'orders_edit', methods: ['GET','POST'])]
-    public function edit(Request $request, Orders $order): Response
-    {
-        $form = $this->createForm(OrdersType::class, $order);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('orders_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('orders/edit.html.twig', [
-            'order' => $order,
-            'form' => $form,
         ]);
     }
 

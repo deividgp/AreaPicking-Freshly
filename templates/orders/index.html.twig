@@ -3,20 +3,32 @@
 {% block title %}Orders index{% endblock %}
 
 {% block body %}
-    <h1>Orders index</h1>
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
-        <input type="submit" value="New" />
-    {{ form_end(form) }}
+    <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id="orderDetails" class="modal-body"></div>
+            </div>
+        </div>
+    </div>
 
-    <a href="{{ path('orders_new') }}">New order</a>
-    {{ form_start(form) }}
-        {{ form_widget(form) }}
+    <form method="POST" id="createOrder">
+        {{ form_start(form) }}
+        {{ form_rest(form)}}
+        <input type="submit" value="New order"/>
+        {{ form_end(form) }}
+    </form>
+    {{ form_start(formFilter) }}
+        {{ form_widget(formFilter) }}
         <input type="submit" value="Find" />
-    {{ form_end(form) }}
+    {{ form_end(formFilter) }}
     <a href="{{ path('orders_index') }}">Reset filter</a>
-    <table class="table">
-        <thead>
+    <div id="table-output">
+        <table class="table">
+            <thead>
             <tr>
                 <th>IdOrder</th>
                 <th>Date</th>
@@ -24,53 +36,56 @@
                 <th>Address</th>
                 <th>Country</th>
                 <th>Products</th>
-                <th>Country</th>
                 <th>State</th>
                 <th>actions</th>
             </tr>
-        </thead>
-        <tbody>
-        {% for order in orders %}
-            <tr>
-                <td>{{ order.idOrder }}</td>
-                <td>{{ order.dateAdd ? order.dateAdd|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ order.idAddressDelivery.firstname }} {{ order.idAddressDelivery.lastname }}</td>
-                <td>{{ order.idAddressDelivery.address1 }} {{ order.idAddressDelivery.address2 }}</td>
-                <td>{{ order.idAddressDelivery.idCountry.name }}</td>
-                <td>
-                {% for orderDetail in orderDetails %}
-                    {% if orderDetail.idOrder == order %}
-                        {{ orderDetail.productName }}
-                    {% endif %}
-                {% endfor %}
-                </td>
-                <td>{{ order.idAddressDelivery.idCountry.name }}</td>
-                <td>
-                    <form method="post" action="{{ path('orders_update', {'idOrder': order.idOrder}) }}">
-                        <select name="state" id="state">
-                            {% for orderStateLang in orderStateLangs %}
-                                {% if orderStateLang == order.currentState %}
-                                    <option selected="selected" value={{ orderStateLang.idOrderState }}>
-                                {% else %}
-                                    <option value={{ orderStateLang.idOrderState }}>
-                                {% endif %}
-                                {{ orderStateLang.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <button class="btn">Update state</button>
-                    </form>
-{#                    {{ order.currentState.name }}#}
-                </td>
-                <td>
-                    <a href="{{ path('orders_show', {'idOrder': order.idOrder}) }}">show</a>
-                    <a href="{{ path('orders_edit', {'idOrder': order.idOrder}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for order in orders %}
+                <tr data-bs-toggle="modal" data-bs-target="#orderModal">
+                    <td id="idOrder">{{ order.idOrder }}</td>
+                    <td id="date">{{ order.dateAdd ? order.dateAdd|date('Y-m-d H:i:s') : '' }}</td>
+                    <td id="addressName">{{ order.idAddressDelivery.firstname }} {{ order.idAddressDelivery.lastname }}</td>
+                    <td id="address">{{ order.idAddressDelivery.address1 }} {{ order.idAddressDelivery.address2 }}</td>
+                    <td id="country">{{ order.idAddressDelivery.idCountry.name }}</td>
+                    <td id="products">
+                        {% for orderDetail in orderDetails %}
+                            {% if orderDetail.idOrder == order %}
+                                {{ orderDetail.productName }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td id="state">{{ order.currentState.name }}</td>
+                    <td>
+                        <form method="post" action="{{ path('orders_update', {'idOrder': order.idOrder}) }}">
+                            <label for="state"></label><select name="state" id="state">
+                                {% for orderStateLang in orderStateLangs %}
+{#                                    {% if orderStateLang == order.currentState %}#}
+{#                                    <option selected="selected" value={{ orderStateLang.idOrderState }}>#}
+{#                                    {% else %}#}
+{#                                        <option value={{ orderStateLang.idOrderState }}>#}
+{#                                    {% endif %}#}
+                                    <option value={{ orderStateLang.idOrderState }}>{{ orderStateLang.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <button class="btn">Update state</button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
 {% endblock %}
